@@ -1,0 +1,20 @@
+
+# CHECK PORT
+
+netstat -aof | findstr 5433
+
+# RODAR POSTGRES NO CONTAINER DOCKER
+docker run --name librarydb -p 5433:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=library  postgres:17.5
+
+# RODAR PGADMIN 4 NO CONTAINER DOCKER
+postgres: docker run --name pgadmin4 -p 15432:80 -e PGADMIN_DEFAULT_EMAIL=admin@admin.com -e PGADMIN_DEFAULT_PASSWORD=admin dpage/pgadmin4
+
+
+## Para que haja comunicação entre os containers docker é necessario criar um network cara comunicar os dois ou mais containers.
+
+# CRIANDO NETWORK o network serve para comunicar dois ou mais containers no docker
+docker network create (nome da network)
+
+## Para conectar os conteiners a network basta criar novamente os containers colocando como parâmetro a network
+
+--network (nome da network)
