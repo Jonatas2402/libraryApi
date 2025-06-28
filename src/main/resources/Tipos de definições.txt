@@ -1,0 +1,3 @@
+UPDATE: Cria as tabelas automaticamente quando subimos a aplicação e quando derrubamos a aplicação ele continua lá.
+NONE: padrão, não cria nada no banco de dados.
+CREATE-DROP: Cria as tabelas quando subimos a aplicação e quando derrubamos ele excluir tudo que foi criado, ideal para testes
