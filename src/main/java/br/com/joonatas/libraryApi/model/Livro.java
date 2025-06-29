@@ -13,7 +13,7 @@ import java.util.UUID;
 public class Livro {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private UUID id;
 
     @Column(name = "isbn", length = 20,nullable = false) //nullable = not null = não pode ficar nulo, tem que ter um valor

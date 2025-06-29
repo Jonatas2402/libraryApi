@@ -15,7 +15,7 @@ import java.util.UUID;
 public class Autor {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private UUID id;
 
     @Column(name = "nome", length = 100,nullable = false)
