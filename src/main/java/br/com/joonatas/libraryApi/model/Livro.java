@@ -34,7 +34,8 @@ public class Livro {
     //poderia ser utilizado BigDecimal também.
 
     // Fazendo relacionamento entre as tabelas.
-    @ManyToOne // Especifica o tipo de relacionamento, nesse caso é muitos para um, um autor pode ter vários livros.
+    @ManyToOne //(cascade = CascadeType.ALL)
+    // Especifica o tipo de relacionamento, nesse caso é muitos para um, um autor pode ter vários livros.
     @JoinColumn(name = "id_autor") // Diz que é uma chave estrangeira.
     private Autor autor;
 
