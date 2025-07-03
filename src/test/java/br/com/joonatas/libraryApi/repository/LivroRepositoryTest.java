@@ -36,6 +36,46 @@ class LivroRepositoryTest {
 
         livro.setAutor(autor);
         repository.save(livro);
+        /*Aqui o livro é salvo quando passamos o id de um autor já salvo no banco de dados*/
+    }
+    @Test
+    void salvaCascadeTest(){
+        Livro livro = new Livro();
+        livro.setIsbn("4846565");
+        livro.setPreco(BigDecimal.valueOf(100));
+        livro.setGenero(GeneroLivro.AVENTURA);
+        livro.setDataLancamento(LocalDate.of(2000,01,15));
+        livro.setTitulo("As aventuras de lori");
+
+
+        Autor autor = new Autor();
+        autor.setNome("João");
+        autor.setNacionalidade("Brasileiro");
+        autor.setDataNasc(LocalDate.of(1960,2,23));
+
+        livro.setAutor(autor);
+        repository.save(livro);
+        /*Aqui utilizando o cascade, eu subo um novo livro junto com um novo autor.*/
+    }
+    @Test
+    void salvaLivroEAutorTest(){
+        Livro livro = new Livro();
+        livro.setIsbn("4846565");
+        livro.setPreco(BigDecimal.valueOf(100));
+        livro.setGenero(GeneroLivro.AVENTURA);
+        livro.setDataLancamento(LocalDate.of(2000,01,15));
+        livro.setTitulo("aventura nas nuvens.");
+
+        Autor autor = new Autor();
+        autor.setNome("Marisa");
+        autor.setNacionalidade("Brasileiro");
+        autor.setDataNasc(LocalDate.of(1970,2,23));
+
+        autorRepository.save(autor);
+
+        livro.setAutor(autor);
+        repository.save(livro);
+        /*Aqui utilizando o cascade, eu subo um novo livro junto com um novo autor.*/
     }
 
     @Test
@@ -53,7 +93,6 @@ class LivroRepositoryTest {
             livroEncontrado.setPreco(BigDecimal.valueOf(250));
 
             repository.save(livroEncontrado);
-
         }
     }
 
