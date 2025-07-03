@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @SpringBootTest
-public class AutorRepositoryTest {
+class AutorRepositoryTest {
     //Essa classe é dedicada para fazer teste apenas no autor repository.
 
     @Autowired
