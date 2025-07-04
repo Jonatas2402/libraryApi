@@ -34,7 +34,12 @@ public class Livro {
     //poderia ser utilizado BigDecimal também.
 
     // Fazendo relacionamento entre as tabelas.
-    @ManyToOne //(cascade = CascadeType.ALL)
+    @ManyToOne (
+            //cascade = CascadeType.ALL
+            fetch = FetchType.LAZY //Esse parâmetro diz se a entidade livro leva ou não os dados do autor.
+                                   //Lazy: ele não permite pegar dados do autor.
+                                  //Eager: é o método default(padrão) que permite acesso a intidade autor.
+     )
     // Especifica o tipo de relacionamento, nesse caso é muitos para um, um autor pode ter vários livros.
     @JoinColumn(name = "id_autor") // Diz que é uma chave estrangeira.
     private Autor autor;
