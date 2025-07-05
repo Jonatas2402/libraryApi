@@ -1,11 +1,16 @@
 package br.com.joonatas.libraryApi.repository;
 
 import br.com.joonatas.libraryApi.model.Autor;
+import br.com.joonatas.libraryApi.model.GeneroLivro;
+import br.com.joonatas.libraryApi.model.Livro;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,6 +21,9 @@ class AutorRepositoryTest {
 
     @Autowired
     AutorRepository repository;
+
+    @Autowired
+    LivroRepository livroRepository;
     //Fazendo um teste para salvar no banco de dados.
     @Test
     public void salvarTest(){
@@ -56,8 +64,65 @@ class AutorRepositoryTest {
     }
     @Test
     public void deletePorIdTest(){
-        var id = UUID.fromString("2c661846-4ea8-44a0-a246-49b0c0fd8e72");
+        var id = UUID.fromString("5aba62db-b738-49af-b607-b4d0c7f253f7");
 
         repository.deleteById(id);
+    }
+
+    @Test
+    void salvarAutorComLivrosTest(){
+        Autor autor = new Autor();
+        autor.setNome("Ryan");
+        autor.setNacionalidade("Brasileiro");
+        autor.setDataNasc(LocalDate.of(1990,4,20));
+
+        Livro livro = new Livro();
+        livro.setIsbn("48483679");
+        livro.setPreco(BigDecimal.valueOf(250));
+        livro.setGenero(GeneroLivro.BIOGRAFIA);
+        livro.setDataLancamento(LocalDate.of(2018,6,25));
+        livro.setTitulo("A vida de emily rolan");
+        livro.setAutor(autor);
+
+
+        Livro livro2 = new Livro();
+        livro2.setIsbn("1845362");
+        livro2.setPreco(BigDecimal.valueOf(180));
+        livro2.setGenero(GeneroLivro.ACAO);
+        livro2.setDataLancamento(LocalDate.of(2020,2,15));
+        livro2.setTitulo("Jack ryan");
+        livro2.setAutor(autor);
+
+        //ADICIONANDO LIVRO NA LISTA DO AUTOR.
+        autor.setLivros(new ArrayList<>());
+        autor.getLivros().add(livro2);
+        autor.getLivros().add(livro);
+
+        repository.save(autor);
+        //Utilizando o cascade nao será necessario o uso do livroRepository.
+    }
+    @Test
+    void listarLivrosDoAutor(){
+        //Uma forma de trazer os dados do livro do autor sem problemas
+        var id = UUID.fromString("653d6f79-d13b-4af0-8046-2b241cd58e98");
+        var autor = repository.findById(id).get();
+
+        List<Livro> livrosLista = livroRepository.findByAutor(autor);
+        autor.setLivros(livrosLista);
+
+        autor.getLivros().forEach(System.out::println);
+    }
+
+    @Test
+    void buscaPorNome(){
+        var nomeAutor = repository.findByNome("Antonio");
+        nomeAutor.forEach(System.out::println);
+
+    }
+    @Test
+    void pesquisaPorNacionalidadeTest(){
+        var buscaNacionalidade = repository.findByNacionalidade("Brasileiro");
+
+        buscaNacionalidade.forEach(System.out::println);
     }
 }

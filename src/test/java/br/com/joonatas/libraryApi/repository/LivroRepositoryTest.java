@@ -6,7 +6,6 @@ import br.com.joonatas.libraryApi.model.Livro;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -132,8 +131,6 @@ class LivroRepositoryTest {
         System.out.println(livro.getAutor().getNome());
 
     }
-
-
     @Test
     void deleteByIdTest(){
         var id = UUID.fromString("5aa48bf6-6ae1-4117-89be-f2fd15de75f7");
@@ -141,4 +138,26 @@ class LivroRepositoryTest {
         repository.deleteById(id);
     }
 
+    @Test
+    void pesquisaPorTituloTest(){
+        List<Livro> lista = repository.findByTitulo("As aventuras de lori");
+
+        lista.forEach(System.out::println);
+    }
+
+    @Test
+    void pesquisaTituloEPrecoTest(){
+        var preco = BigDecimal.valueOf(180);
+        var tituloPesquisa = "Jack ryan";
+        List<Livro> tituloEPreco = repository.findByTituloAndPreco(tituloPesquisa, preco);
+
+        tituloEPreco.forEach(System.out::println);
+    }
+
+    @Test
+    void buscaPorGeneroTest(){
+        List<Livro>  listaGenero = repository.findByGenero(GeneroLivro.AVENTURA);
+
+        listaGenero.forEach(System.out::println);
+    }
 }
