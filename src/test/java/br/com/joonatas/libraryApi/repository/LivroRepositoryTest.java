@@ -103,18 +103,15 @@ class LivroRepositoryTest {
         livros.forEach(System.out::println);
     }
 
-
     @Test
     void atualizaAutorDoLivroTest(){
         UUID id = UUID.fromString("8e1618ea-9836-416b-8fe1-b1941922b838");
-
         var livroParaAtualizar = repository.findById(id).orElse(null);
 
-        var idAutor = autorRepository.findById(UUID.fromString("8180a0c3-2dd0-4f77-bf19-c6e565a76d2a"))
+        var idAutor = autorRepository.findById
+                        (UUID.fromString("8180a0c3-2dd0-4f77-bf19-c6e565a76d2a"))
                 .orElse(null);
-
         livroParaAtualizar.setAutor(idAutor);
-
         repository.save(livroParaAtualizar);
     }
 
@@ -129,19 +126,16 @@ class LivroRepositoryTest {
         System.out.println(livro.getTitulo());
         System.out.println("Autor: ");
         System.out.println(livro.getAutor().getNome());
-
     }
     @Test
     void deleteByIdTest(){
         var id = UUID.fromString("5aa48bf6-6ae1-4117-89be-f2fd15de75f7");
-
         repository.deleteById(id);
     }
 
     @Test
     void pesquisaPorTituloTest(){
         List<Livro> lista = repository.findByTitulo("As aventuras de lori");
-
         lista.forEach(System.out::println);
     }
 
@@ -150,14 +144,18 @@ class LivroRepositoryTest {
         var preco = BigDecimal.valueOf(180);
         var tituloPesquisa = "Jack ryan";
         List<Livro> tituloEPreco = repository.findByTituloAndPreco(tituloPesquisa, preco);
-
         tituloEPreco.forEach(System.out::println);
     }
 
     @Test
     void buscaPorGeneroTest(){
         List<Livro>  listaGenero = repository.findByGenero(GeneroLivro.AVENTURA);
-
         listaGenero.forEach(System.out::println);
+    }
+    @Test
+    void buscaLivroPorData(){
+        List<Livro> buscaPorData = repository.findByDataLancamentoBetween(LocalDate.of(2000,1,15
+        ), LocalDate.of(2016,6,20));
+        buscaPorData.forEach(System.out::println);
     }
 }

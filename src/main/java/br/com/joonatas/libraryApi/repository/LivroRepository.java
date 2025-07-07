@@ -6,6 +6,7 @@ import br.com.joonatas.libraryApi.model.Livro;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +26,9 @@ public interface LivroRepository extends JpaRepository<Livro, UUID> {
     //Busca por Genero
     //select * from livro where genero = ?
     List<Livro> findByGenero(GeneroLivro genero);
+
+    //Busca livro entre datas
+    List<Livro> findByDataLancamentoBetween(LocalDate inicio, LocalDate fim);
 
 
 }
