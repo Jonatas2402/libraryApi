@@ -90,7 +90,7 @@ public class AutorController {
         Optional<Autor> autorOptional = service.obterPorId(idAutor);
         if (autorOptional.isEmpty()){
             return ResponseEntity.notFound().build();//Se não houver autor com esse id.
-        }
+        } //Quando não houver autor será lançada a mensagem de erro pelo ResponseEntity.
         var autor = autorOptional.get();
         autor.setNome(dto.nome());
         autor.setDataNasc(dto.dataNascimento());
