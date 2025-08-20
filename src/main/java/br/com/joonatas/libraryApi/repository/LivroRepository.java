@@ -10,6 +10,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+
+
 public interface LivroRepository extends JpaRepository<Livro, UUID> {
     //Query Method
     //select * from livro where id_autor = ?
@@ -28,7 +30,7 @@ public interface LivroRepository extends JpaRepository<Livro, UUID> {
     List<Livro> findByGenero(GeneroLivro genero);
 
     //Busca livro entre datas
+    //select * from livro where data_lancamento between ? and ?
     List<Livro> findByDataLancamentoBetween(LocalDate inicio, LocalDate fim);
-
 
 }
