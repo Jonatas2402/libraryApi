@@ -1,6 +1,8 @@
 package br.com.joonatas.libraryApi.controller;
 
 import br.com.joonatas.libraryApi.controller.dto.AutorDTO;
+import br.com.joonatas.libraryApi.controller.dto.ErroResposta;
+import br.com.joonatas.libraryApi.exceptions.RegistroDuplicadoExceptions;
 import br.com.joonatas.libraryApi.model.Autor;
 import br.com.joonatas.libraryApi.service.AutorService;
 import org.springframework.http.ResponseEntity;
@@ -24,20 +26,25 @@ public class AutorController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> salvar(@RequestBody AutorDTO autor){
-        var autorEntidade = autor.mapearParaAutor();
-        service.salvar(autorEntidade);
+    public ResponseEntity<Object> salvar(@RequestBody AutorDTO autor) {
+        try {
+            var autorEntidade = autor.mapearParaAutor();
+            service.salvar(autorEntidade);
 
-        //http://localhost:8080/autores/1561643546843541
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()//Pega a requisição atual.
-                .path("/{id}")//Acrescenta o id no final.
-                .buildAndExpand(autorEntidade.getId())//Substitui {id} pelo id real do usuário.
-                .toUri();//Constrói uma URI final.
+            //http://localhost:8080/autores/1561643546843541
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()//Pega a requisição atual.
+                    .path("/{id}")//Acrescenta o id no final.
+                    .buildAndExpand(autorEntidade.getId())//Substitui {id} pelo id real do usuário.
+                    .toUri();//Constrói uma URI final.
 
-        return  ResponseEntity
-                .created(location) //Retorna status "201 ok" e define url no cabeçalho.
-                .build(); //Retorna o usuário criado no corpo da resposta.
+            return ResponseEntity
+                    .created(location) //Retorna status "201 ok" e define url no cabeçalho.
+                    .build(); //Retorna o usuário criado no corpo da resposta.
+        } catch (RegistroDuplicadoExceptions e) {
+            var erroDTO = ErroResposta.conflito(e.getMessage());
+            return ResponseEntity.status(erroDTO.status()).body(erroDTO);
+        }
     }
     @GetMapping("{id}")
     public ResponseEntity<AutorDTO> obterDetelhes(@PathVariable("id") String id){
@@ -86,16 +93,20 @@ public class AutorController {
     @PutMapping("{id}")
     public ResponseEntity<Void> atualizaAutor(@PathVariable("id") String id, @RequestBody AutorDTO dto){
         //Trsnformando o id em UUID
-        var idAutor = UUID.fromString(id);
-        Optional<Autor> autorOptional = service.obterPorId(idAutor);
-        if (autorOptional.isEmpty()){
-            return ResponseEntity.notFound().build();//Se não houver autor com esse id.
-        } //Quando não houver autor será lançada a mensagem de erro pelo ResponseEntity.
-        var autor = autorOptional.get();
-        autor.setNome(dto.nome());
-        autor.setDataNasc(dto.dataNascimento());
-        autor.setNacionalidade(dto.nacionalidade());
-        service.atualizar(autor);
-        return ResponseEntity.noContent().build();
+        try {
+            var idAutor = UUID.fromString(id);
+            Optional<Autor> autorOptional = service.obterPorId(idAutor);
+            if (autorOptional.isEmpty()) {
+                return ResponseEntity.notFound().build();//Se não houver autor com esse id.
+            } //Quando não houver autor será lançada a mensagem de erro pelo ResponseEntity.
+            var autor = autorOptional.get();
+            autor.setNome(dto.nome());
+            autor.setDataNasc(dto.dataNascimento());
+            autor.setNacionalidade(dto.nacionalidade());
+            service.atualizar(autor);
+            return ResponseEntity.noContent().build();
+        } catch (RegistroDuplicadoExceptions e){
+
+        }
     }
 }
