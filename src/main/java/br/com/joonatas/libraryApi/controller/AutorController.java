@@ -93,7 +93,6 @@ public class AutorController {
     @PutMapping("{id}")
     public ResponseEntity<Void> atualizaAutor(@PathVariable("id") String id, @RequestBody AutorDTO dto){
         //Trsnformando o id em UUID
-        try {
             var idAutor = UUID.fromString(id);
             Optional<Autor> autorOptional = service.obterPorId(idAutor);
             if (autorOptional.isEmpty()) {
@@ -105,8 +104,6 @@ public class AutorController {
             autor.setNacionalidade(dto.nacionalidade());
             service.atualizar(autor);
             return ResponseEntity.noContent().build();
-        } catch (RegistroDuplicadoExceptions e){
 
-        }
     }
 }
