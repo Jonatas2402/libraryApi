@@ -2,9 +2,12 @@ package br.com.joonatas.libraryApi.controller;
 
 import br.com.joonatas.libraryApi.controller.dto.AutorDTO;
 import br.com.joonatas.libraryApi.controller.dto.ErroResposta;
+import br.com.joonatas.libraryApi.exceptions.OperacaoNaoPermitidaException;
 import br.com.joonatas.libraryApi.exceptions.RegistroDuplicadoExceptions;
 import br.com.joonatas.libraryApi.model.Autor;
 import br.com.joonatas.libraryApi.service.AutorService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -17,16 +20,14 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/autores")
+@RequiredArgsConstructor
 public class AutorController {
 
     private final AutorService service;
 
-    public AutorController(AutorService service){
-        this.service = service;
-    }
 
     @PostMapping
-    public ResponseEntity<Object> salvar(@RequestBody AutorDTO autor) {
+    public ResponseEntity<Object> salvar(@RequestBody @Valid AutorDTO autor) {
         try {
             var autorEntidade = autor.mapearParaAutor();
             service.salvar(autorEntidade);
@@ -64,20 +65,25 @@ public class AutorController {
         /*Caso não exista um autor essa será a resposta.*/
     }
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deletaAutor(@PathVariable("id") String id){
-        var idAutor = UUID.fromString(id);
-        Optional<Autor> autorOptional = service.obterPorId(idAutor);
-        if (autorOptional.isEmpty()){
-            return ResponseEntity.notFound().build();//Se não houver autor com esse id.
+    public ResponseEntity<Object> deletaAutor(@PathVariable("id") String id){
+        try {
+            var idAutor = UUID.fromString(id);
+            Optional<Autor> autorOptional = service.obterPorId(idAutor);
+            if (autorOptional.isEmpty()) {
+                return ResponseEntity.notFound().build();//Se não houver autor com esse id.
+            }
+            service.deletar(autorOptional.get());
+            return ResponseEntity.noContent().build();
+        } catch (OperacaoNaoPermitidaException e){
+            var erro = ErroResposta.respostaPadrao(e.getMessage());
+            return ResponseEntity.status(erro.status()).body(erro);
         }
-        service.deletar(autorOptional.get());
-        return ResponseEntity.noContent().build();
     }
     @GetMapping
     public ResponseEntity<List<AutorDTO>> pesquisar(
             @RequestParam(value = "nome", required = false) String nome,
             @RequestParam(value = "nacionalidade", required = false) String nacionalidade){
-        List<Autor> resultado = service.pesquisar(nome,nacionalidade);
+        List<Autor> resultado = service.pesquisaByExample(nome,nacionalidade);
         //Transformando a lista em autorDTO.
         List<AutorDTO> lista = resultado
                 .stream()
@@ -91,8 +97,9 @@ public class AutorController {
         return ResponseEntity.ok(lista);
     }
     @PutMapping("{id}")
-    public ResponseEntity<Void> atualizaAutor(@PathVariable("id") String id, @RequestBody AutorDTO dto){
+    public ResponseEntity<Object> atualizaAutor(@PathVariable("id") String id, @RequestBody @Valid AutorDTO dto){
         //Trsnformando o id em UUID
+        try {
             var idAutor = UUID.fromString(id);
             Optional<Autor> autorOptional = service.obterPorId(idAutor);
             if (autorOptional.isEmpty()) {
@@ -104,6 +111,10 @@ public class AutorController {
             autor.setNacionalidade(dto.nacionalidade());
             service.atualizar(autor);
             return ResponseEntity.noContent().build();
-
+        }catch (RegistroDuplicadoExceptions e){
+            var erroDTO = ErroResposta.respostaPadrao(e.getMessage());
+            return ResponseEntity.status(erroDTO.status()).body(erroDTO);
+        }
     }
+
 }

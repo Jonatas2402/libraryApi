@@ -3,15 +3,20 @@ package br.com.joonatas.libraryApi.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "livro")
 @Data
 @ToString(exclude = "autor")
+@EntityListeners(AuditingEntityListener.class)
 public class Livro {
     @Id
     @Column(name = "id")
@@ -46,8 +51,14 @@ public class Livro {
     @JoinColumn(name = "id_autor") // Diz que é uma chave estrangeira.
     private Autor autor;
 
+    @CreatedDate //Insere automaticamente a data hora atual.
+    @Column(name = "data_cadastro")
+    private LocalDateTime dataCadastro;
 
-
+    @LastModifiedDate //Sempre que um autor for atualizado ele insere a data hora atual.
+    @Column(name = "data_atualizacao")
+    private LocalDateTime dataAtualizacao;
+    private UUID idusuario;
 
 
 }

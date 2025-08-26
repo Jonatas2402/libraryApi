@@ -1,8 +1,13 @@
 package br.com.joonatas.libraryApi.service;
 
+import br.com.joonatas.libraryApi.exceptions.OperacaoNaoPermitidaException;
 import br.com.joonatas.libraryApi.model.Autor;
 import br.com.joonatas.libraryApi.repository.AutorRepository;
+import br.com.joonatas.libraryApi.repository.LivroRepository;
 import br.com.joonatas.libraryApi.validator.AutorValidator;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,14 +15,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor //Cria construtor dos campos obrigatorios.
 public class AutorService {
     private final AutorRepository repository;
     private final AutorValidator validator;
-
-    public AutorService(AutorRepository repository, AutorValidator validator){
-        this.repository = repository;
-        this.validator = validator;
-    }
+    private final LivroRepository livroRepository;
 
    public Autor salvar(Autor autor){
         validator.validar(autor);
@@ -27,6 +29,9 @@ public class AutorService {
         return repository.findById(id);
    }
    public void deletar(Autor autor){
+        if (possuiLivro(autor)){
+            throw new OperacaoNaoPermitidaException("Não é possível excluir um Autor que possui livros cadastrados!");
+        }
         repository.delete(autor);
    }
    public List<Autor> pesquisar(String nome, String nacionalidade){
@@ -41,11 +46,26 @@ public class AutorService {
         }
         return repository.findAll();
    }
+   public List<Autor> pesquisaByExample(String nome, String nacionalidade){
+       var autor = new Autor();
+       autor.setNome(nome);
+       autor.setNacionalidade(nacionalidade);
+       ExampleMatcher matcher = ExampleMatcher
+               .matching()
+               .withIgnoreNullValues()
+               .withIgnoreCase()
+               .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+       Example<Autor> autorExample = Example.of(autor, matcher);
+       return repository.findAll(autorExample);
+   }
    public void atualizar(Autor autor){
         if (autor.getId() == null){
             throw new IllegalArgumentException("Para atualizar, é preciso que o autor já esteja cadastrado no bancop de dados.");
         }
         validator.validar(autor);
         repository.save(autor);
+   }
+   public boolean possuiLivro (Autor autor){
+       return livroRepository.existsByAutor(autor);
    }
 }

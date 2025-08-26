@@ -8,6 +8,7 @@ data_atualizacao timestamp,
 id_usuario uuid
 );
 
+
 create table livro(
 id uuid not null primary key,
 isbn varchar(50) not null,

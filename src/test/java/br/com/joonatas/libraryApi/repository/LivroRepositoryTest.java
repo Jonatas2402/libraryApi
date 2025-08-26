@@ -30,10 +30,10 @@ class LivroRepositoryTest {
         livro.setPreco(BigDecimal.valueOf(100));
         livro.setGenero(GeneroLivro.AVENTURA);
         livro.setDataLancamento(LocalDate.of(2000,01,15));
-        livro.setTitulo("As aventuras de lori");
+        livro.setTitulo("Livro 2");
 
         Autor autor = autorRepository
-                .findById(UUID.fromString("8180a0c3-2dd0-4f77-bf19-c6e565a76d2a"))
+                .findById(UUID.fromString("52a0d8be-91d3-4605-ab44-0b2093ced1ab"))
                 .orElse(null);
 
         livro.setAutor(autor);
@@ -129,7 +129,7 @@ class LivroRepositoryTest {
     }
     @Test
     void deleteByIdTest(){
-        var id = UUID.fromString("5aa48bf6-6ae1-4117-89be-f2fd15de75f7");
+        var id = UUID.fromString("76b523f6-849e-447d-83da-24a7ec08899c");
         repository.deleteById(id);
     }
 

@@ -36,7 +36,7 @@ public class Autor {
     @Column(name = "nacionalidade", nullable = false)
     private String nacionalidade;
 
-   @OneToMany(mappedBy = "autor", fetch = FetchType.LAZY, cascade = CascadeType.ALL) // Criando relacionamento do autor, nesse caso um autor para vários livros.
+   @OneToMany(mappedBy = "autor", fetch = FetchType.LAZY) //cascade = CascadeType.ALL) // Criando relacionamento do autor, nesse caso um autor para vários livros.
     //mappedBy diz como e onde a entidade autor está na entidade livro.
     private List<Livro> livros;
     @CreatedDate //Insere automaticamente a data hora atual.
@@ -46,5 +46,5 @@ public class Autor {
     @LastModifiedDate //Sempre que um autor for atualizado ele insere a data hora atual.
     @Column(name = "data_atualizacao")
     private LocalDateTime dataAtualizacao;
-    //private UUID idusuario;
+    private UUID idusuario;
 }

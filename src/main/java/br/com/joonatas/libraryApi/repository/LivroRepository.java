@@ -33,4 +33,6 @@ public interface LivroRepository extends JpaRepository<Livro, UUID> {
     //select * from livro where data_lancamento between ? and ?
     List<Livro> findByDataLancamentoBetween(LocalDate inicio, LocalDate fim);
 
+    boolean existsByAutor(Autor autor);
+
 }
