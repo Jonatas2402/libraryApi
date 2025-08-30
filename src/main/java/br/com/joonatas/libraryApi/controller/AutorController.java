@@ -2,6 +2,7 @@ package br.com.joonatas.libraryApi.controller;
 
 import br.com.joonatas.libraryApi.controller.dto.AutorDTO;
 import br.com.joonatas.libraryApi.controller.dto.ErroResposta;
+import br.com.joonatas.libraryApi.controller.mappers.AutorMapper;
 import br.com.joonatas.libraryApi.exceptions.OperacaoNaoPermitidaException;
 import br.com.joonatas.libraryApi.exceptions.RegistroDuplicadoExceptions;
 import br.com.joonatas.libraryApi.model.Autor;
@@ -24,12 +25,13 @@ import java.util.stream.Collectors;
 public class AutorController {
 
     private final AutorService service;
+    private final AutorMapper mapper;
 
 
     @PostMapping
-    public ResponseEntity<Object> salvar(@RequestBody @Valid AutorDTO autor) {
+    public ResponseEntity<Object> salvar(@RequestBody @Valid AutorDTO dto) {
         try {
-            var autorEntidade = autor.mapearParaAutor();
+            var autorEntidade = mapper.toEntity(dto);
             service.salvar(autorEntidade);
 
             //http://localhost:8080/autores/1561643546843541
@@ -50,19 +52,11 @@ public class AutorController {
     @GetMapping("{id}")
     public ResponseEntity<AutorDTO> obterDetelhes(@PathVariable("id") String id){
         var idAutor = UUID.fromString(id);
-        Optional<Autor> autorOptional = service.obterPorId(idAutor);
-        if (autorOptional.isPresent()){
-            Autor autor = autorOptional.get();
-            AutorDTO dto = new AutorDTO(
-                    autor.getId(),
-                    autor.getNome(),
-                    autor.getDataNasc(),
-                    autor.getNacionalidade());
-            return ResponseEntity.ok(dto);
-            /*Caso exista um autor essa será a resposta*/
-        }
-        return ResponseEntity.notFound().build();
-        /*Caso não exista um autor essa será a resposta.*/
+        return  service.obterPorId(idAutor)
+                .map(autor -> {
+                    AutorDTO dto = mapper.toDTO(autor);
+                    return ResponseEntity.ok(dto);
+                }).orElseGet(() -> ResponseEntity.notFound().build() );
     }
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deletaAutor(@PathVariable("id") String id){

@@ -4,6 +4,7 @@ import br.com.joonatas.libraryApi.controller.dto.ErroResposta;
 import br.com.joonatas.libraryApi.controller.dto.cadastroLivroDTO;
 import br.com.joonatas.libraryApi.exceptions.RegistroDuplicadoExceptions;
 import br.com.joonatas.libraryApi.service.LivroService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +20,7 @@ public class LivroController {
     private final LivroService service;
 
     @PostMapping
-    public ResponseEntity<Object> salvar(@RequestBody cadastroLivroDTO dto){
+    public ResponseEntity<Object> salvar(@RequestBody @Valid cadastroLivroDTO dto){
         try {
             return ResponseEntity.ok(dto);
         }catch (RegistroDuplicadoExceptions e){

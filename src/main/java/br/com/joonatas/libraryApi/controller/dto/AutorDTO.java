@@ -1,7 +1,6 @@
 package br.com.joonatas.libraryApi.controller.dto;
 
 
-import br.com.joonatas.libraryApi.model.Autor;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
@@ -11,6 +10,8 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 //Representação do contrato da API.
+
+//Utilizando Mapper.
 
 public record AutorDTO(UUID id,
                        @NotBlank(message = "Campo obrigatório!")
@@ -22,13 +23,4 @@ public record AutorDTO(UUID id,
                        @NotBlank(message = "Campo obrigatório")
                        @Size(min = 2,max = 50, message = "Campo fora do tamanho padrão")
                        String nacionalidade) {
-
-    public Autor mapearParaAutor(){
-        Autor autor = new Autor();
-
-        autor.setNome(this.nome);
-        autor.setDataNasc(this.dataNascimento);
-        autor.setNacionalidade(this.nacionalidade);
-        return autor;
-    }
 }
